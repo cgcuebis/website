@@ -1,0 +1,308 @@
+:root{
+  --bg: #efe7dd;
+  --paper: #e7ddd2;
+  --paper2: #ddd2c7;
+  --ink: #201d19;
+  --muted: rgba(32,29,25,.65);
+
+  --shadow1: 0 10px 30px rgba(0,0,0,.10);
+  --shadow2: 0 18px 50px rgba(0,0,0,.16);
+
+  --ease: cubic-bezier(.2,.9,.2,1);
+  --stackW: 420px;
+  --folderH: 120px;
+  --overlap: 56px; /* bigger overlap = more “file cabinet” */
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* subtle paper grain overlay */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.22;
+  mix-blend-mode:multiply;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(0,0,0,.05), transparent 55%),
+    radial-gradient(circle at 80% 30%, rgba(0,0,0,.04), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.015), rgba(0,0,0,.015) 1px, transparent 1px, transparent 4px);
+}
+
+.top{
+  padding: 28px 34px 0;
+}
+.kicker{
+  font-size: 14px;
+  letter-spacing: .02em;
+  color: var(--muted);
+}
+
+.app{min-height:100%}
+
+.cabinet, .chapter{
+  padding: 22px 34px 34px;
+  position:relative;
+}
+
+.cabinetGrid{
+  display:grid;
+  grid-template-columns: minmax(320px, var(--stackW)) 1fr;
+  gap: 64px;
+  align-items:start;
+}
+
+.stack{
+  width: min(100%, var(--stackW));
+  position:relative;
+  padding-top: 10px;
+}
+
+/* FOLDER SILHOUETTE (clip-path with tab cut-out) */
+.folder{
+  position:relative;
+  height: var(--folderH);
+  width:100%;
+  background: var(--paper);
+  border: 1px solid rgba(0,0,0,.10);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  cursor:pointer;
+  transform: translateX(0);
+  transition: transform .32s var(--ease), box-shadow .32s var(--ease), filter .32s var(--ease);
+  clip-path: polygon(
+    0% 22%,
+    18% 22%,
+    24% 6%,
+    56% 6%,
+    56% 22%,
+    100% 22%,
+    100% 100%,
+    0% 100%
+  );
+  overflow:hidden;
+}
+
+/* subtle top lip */
+.folder::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.07), transparent 35%);
+  opacity:.22;
+  pointer-events:none;
+}
+
+/* label on tab */
+.folder .tabLabel{
+  position:absolute;
+  top: 10px;
+  left: 26px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* small category line */
+.folder .mini{
+  position:absolute;
+  bottom: 14px;
+  left: 18px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* stack overlap */
+.folder + .folder{
+  margin-top: calc(var(--overlap) * -1);
+}
+
+/* hover physical pull */
+.folder:hover{
+  transform: translateX(26px) translateY(-2px);
+  box-shadow: var(--shadow2);
+}
+
+/* active focus (keyboard) */
+.folder:focus-visible{
+  outline: 2px solid rgba(32,29,25,.35);
+  outline-offset: 3px;
+}
+
+/* note panel should NOT be a “card UI” */
+.note{
+  max-width: 620px;
+  padding: 14px 0;
+}
+.noteTitle{
+  margin: 12px 0 6px;
+  font-family: "Instrument Serif", serif;
+  font-weight: 400;
+  font-size: 54px;
+  line-height: .95;
+}
+.noteDesc{
+  margin: 10px 0 0;
+  max-width: 52ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.noteMeta{
+  margin-top: 14px;
+  font-size: 12px;
+  letter-spacing:.06em;
+  text-transform: uppercase;
+  color: rgba(32,29,25,.55);
+}
+
+/* bottom-right arrow */
+.cornerArrow{
+  position:absolute;
+  right: 34px;
+  bottom: 20px;
+  font-size: 26px;
+  color: rgba(32,29,25,.55);
+}
+
+/* CHAPTER */
+.hidden{display:none}
+
+.chapterShell{
+  position:relative;
+  min-height: calc(100vh - 120px);
+  border: 1px solid rgba(0,0,0,.10);
+  background: linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,255,255,.06));
+  box-shadow: var(--shadow1);
+  padding: 24px;
+}
+
+/* back button minimal */
+.back{
+  border: none;
+  background: transparent;
+  padding: 6px 0 14px;
+  font-weight: 700;
+  color: rgba(32,29,25,.70);
+  cursor:pointer;
+}
+
+.chapterShell{
+  display:grid;
+  grid-template-columns: 1fr 320px;
+  gap: 30px;
+  align-items:start;
+}
+
+.chapterTitle{
+  margin: 10px 0 6px;
+  font-family: "Instrument Serif", serif;
+  font-weight: 400;
+  font-size: 52px;
+  line-height: .95;
+}
+.chapterLead{
+  margin: 0 0 18px;
+  color: var(--muted);
+  max-width: 70ch;
+  line-height: 1.55;
+}
+
+.projectCard{
+  margin-top: 10px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(231,221,210,.55);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+.projectTitle{
+  margin: 0 0 6px;
+  font-size: 18px;
+  letter-spacing:.06em;
+  text-transform: uppercase;
+}
+.projectMeta{
+  font-size: 12px;
+  color: rgba(32,29,25,.65);
+  text-transform: uppercase;
+  letter-spacing:.06em;
+}
+.projectDesc{
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.imageRow{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+.imgPh{
+  height: 92px;
+  border: 1px dashed rgba(32,29,25,.25);
+  background: rgba(255,255,255,.18);
+}
+
+/* RIGHT MINI STACK */
+.miniStackWrap{
+  position:relative;
+  padding-top: 44px;
+}
+.miniStack{
+  position:relative;
+}
+.miniFolder{
+  position:relative;
+  height: 92px;
+  width: 100%;
+  background: var(--paper2);
+  border: 1px solid rgba(0,0,0,.12);
+  box-shadow: 0 8px 18px rgba(0,0,0,.10);
+  clip-path: polygon(
+    0% 26%,
+    28% 26%,
+    36% 8%,
+    64% 8%,
+    64% 26%,
+    100% 26%,
+    100% 100%,
+    0% 100%
+  );
+  cursor:pointer;
+  transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+}
+.miniFolder + .miniFolder{ margin-top: -44px; }
+.miniFolder:hover{ transform: translateX(16px); box-shadow: var(--shadow2); }
+.miniFolder .tabLabel{
+  position:absolute;
+  top: 10px;
+  left: 18px;
+  font-weight: 800;
+  letter-spacing:.10em;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.miniFolder.active{
+  transform: translateX(16px);
+  box-shadow: var(--shadow2);
+  filter: contrast(1.05);
+}
+
+/* responsive */
+@media (max-width: 980px){
+  .cabinetGrid{ grid-template-columns: 1fr; gap: 28px; }
+  .noteTitle{ font-size: 44px; }
+  .chapterShell{ grid-template-columns: 1fr; }
+  .miniStackWrap{ padding-top: 10px; }
+  .miniFolder + .miniFolder{ margin-top: 10px; } /* avoid heavy overlap on mobile */
+}
