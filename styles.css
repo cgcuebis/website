@@ -174,19 +174,82 @@ main { padding: 30px 40px 60px; }
   color: var(--terracotta);
 }
 
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.about-panel {
+.about-hero {
   background: var(--paper);
   border: 1px solid var(--edge);
-  padding: 18px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
 }
 
-.about-panel h2 { font-family: "Rubik Mono One", monospace; font-size: 16px; color: var(--terracotta); }
+.about-header {
+  font-family: "Rubik Mono One", monospace;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--terracotta);
+  margin-bottom: 20px;
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.about-center {
+  text-align: center;
+}
+
+.about-name-large {
+  font-family: "Rubik Mono One", monospace;
+  font-size: 36px;
+  color: var(--terracotta);
+  margin-bottom: 12px;
+}
+
+.about-motto-row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.motto-side {
+  font-family: "Rubik Mono One", monospace;
+  font-size: 16px;
+  color: var(--rust);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.about-portrait {
+  border: 1px solid var(--edge);
+  padding: 10px;
+  background: #f6eee6;
+}
+
+.about-portrait img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.about-note {
+  border: 1px solid var(--edge);
+  padding: 14px;
+  background: #f6eee6;
+}
+
+.note-title {
+  font-family: "Rubik Mono One", monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--rust);
+  margin-bottom: 6px;
+}
 
 .portfolio-grid {
   display: grid;
@@ -244,6 +307,8 @@ main { padding: 30px 40px 60px; }
 @media (max-width: 900px) {
   .site-header { flex-direction: column; align-items: flex-start; gap: 10px; }
   .hero { grid-template-columns: 1fr; }
-  .about-grid, .portfolio-grid, .testimonials, .contact-grid { grid-template-columns: 1fr; }
+  .about-layout { grid-template-columns: 1fr; }
+  .about-motto-row { grid-template-columns: 1fr; }
+  .portfolio-grid, .testimonials, .contact-grid { grid-template-columns: 1fr; }
   main { padding: 20px; }
 }
