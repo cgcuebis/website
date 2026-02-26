@@ -4,62 +4,575 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portfolio Archive</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Fonts: clean bold sans + editorial serif (Pinterest vibe) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* Background + ink like the reference */
+      --bg: #efe7dd;
+      --ink: #1f1b17;
+      --muted: rgba(31,27,23,.62);
+
+      /* Paper + edge */
+      --paper: #e6ddd2;
+      --paper2: #ded4c8;
+      --edge: rgba(0,0,0,.12);
+
+      /* Muted tab colours (Pinterest folders) */
+      --tab1: #c8c1b9; /* warm grey */
+      --tab2: #d6b1ba; /* dusty pink */
+      --tab3: #c2aedb; /* muted lavender */
+      --tab4: #cfb08f; /* warm tan */
+      --tab5: #d7c3b2; /* peach sand */
+
+      --shadowSoft: 0 10px 26px rgba(0,0,0,.10);
+      --shadowHard: 0 18px 50px rgba(0,0,0,.18);
+      --ease: cubic-bezier(.2,.9,.2,1);
+
+      /* Cabinet geometry */
+      --stackW: 520px;
+      --folderH: 132px;
+      --overlap: 78px; /* stronger overlap = real cabinet */
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow-x:hidden;
+    }
+
+    /* Grain + scan vibe + vignette */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.28;
+      mix-blend-mode:multiply;
+      background:
+        radial-gradient(circle at 30% 8%, rgba(0,0,0,.07), transparent 55%),
+        radial-gradient(circle at 78% 24%, rgba(0,0,0,.05), transparent 62%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,.016), rgba(0,0,0,.016) 1px, transparent 1px, transparent 5px);
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-60px;
+      pointer-events:none;
+      opacity:.23;
+      background: radial-gradient(circle at 50% 40%, transparent 55%, rgba(0,0,0,.10) 100%);
+    }
+
+    .top{
+      padding: 28px 34px 8px;
+      font-size: 14px;
+      color: rgba(31,27,23,.55);
+      letter-spacing:.02em;
+    }
+
+    /* Views */
+    .view{padding: 10px 34px 34px}
+    .hidden{display:none}
+
+    /* Cabinet grid: left stack, right editorial text (like reference) */
+    .cabinetGrid{
+      display:grid;
+      grid-template-columns: minmax(320px, var(--stackW)) 1fr;
+      gap: 44px;
+      align-items:start;
+      min-height: calc(100vh - 90px);
+    }
+
+    /* Folder stack container */
+    .stack{
+      width:min(100%, var(--stackW));
+      position:relative;
+      padding-top: 10px;
+    }
+
+    /* Folder button: silhouette with tab cut-out (NOT cards) */
+    .folder{
+      position:relative;
+      width:100%;
+      height: var(--folderH);
+      border: 1px solid var(--edge);
+      background: var(--paper);
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+      cursor:pointer;
+      padding:0;
+      text-align:left;
+      overflow:hidden;
+
+      /* folder silhouette with tab cut */
+      clip-path: polygon(
+        0% 30%,
+        18% 30%,
+        26% 11%,
+        62% 11%,
+        62% 30%,
+        100% 30%,
+        100% 100%,
+        0% 100%
+      );
+
+      transform: translateX(0) translateY(0);
+      transition: transform .36s var(--ease), box-shadow .36s var(--ease), filter .36s var(--ease);
+    }
+
+    /* Coloured tab layer */
+    .folder .tabColor{
+      position:absolute;
+      left:0; right:0;
+      top:0;
+      height: 46%;
+      background: var(--tab);
+      opacity:.92;
+    }
+
+    /* lip shading */
+    .folder::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.22;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.12), transparent 46%),
+        linear-gradient(to right, rgba(0,0,0,.08), transparent 22%);
+    }
+
+    /* label on tab (uppercase bold like ref) */
+    .folder .tabLabel{
+      position:absolute;
+      top: 16px;
+      left: 28px;
+      font-weight: 800;
+      letter-spacing:.14em;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: rgba(31,27,23,.92);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: calc(100% - 56px);
+    }
+
+    /* secondary line (hidden until hover — ONLY tabs visible at rest) */
+    .folder .mini{
+      position:absolute;
+      left: 20px;
+      bottom: 14px;
+      font-size: 12px;
+      color: rgba(31,27,23,.55);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .25s var(--ease), transform .25s var(--ease);
+      max-width: calc(100% - 40px);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* overlap stack */
+    .folder + .folder{ margin-top: calc(var(--overlap) * -1); }
+
+    /* hover pull forward */
+    .folder:hover{
+      transform: translateX(44px) translateY(-3px);
+      box-shadow: var(--shadowHard);
+      filter: contrast(1.02) saturate(.98);
+      z-index: 999;
+    }
+    .folder:hover .mini{ opacity:1; transform: translateY(0); }
+
+    /* Right-side editorial copy (NO card box) */
+    .note{
+      padding-top: 42px;
+      max-width: 720px;
+    }
+    .noteTitle{
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      font-size: 76px;
+      line-height: .92;
+      margin: 0 0 12px;
+      letter-spacing: -.01em;
+    }
+    .noteDesc{
+      margin:0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 62ch;
+    }
+    .noteMeta{
+      margin-top: 16px;
+      font-size: 12px;
+      letter-spacing:.12em;
+      text-transform: uppercase;
+      color: rgba(31,27,23,.50);
+    }
+
+    /* bottom-right arrow like reference */
+    .corner{
+      position:fixed;
+      right: 34px;
+      bottom: 22px;
+      font-size: 28px;
+      color: rgba(31,27,23,.55);
+      user-select:none;
+      pointer-events:none;
+    }
+
+    /* CHAPTER VIEW: open file + right mini folders stack */
+    .chapterShell{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap: 34px;
+      align-items:start;
+      min-height: calc(100vh - 110px);
+    }
+
+    .backBtn{
+      border:none;
+      background:transparent;
+      color: rgba(31,27,23,.70);
+      font-weight: 700;
+      cursor:pointer;
+      padding: 0;
+      margin: 10px 0 16px;
+      letter-spacing:.02em;
+    }
+
+    .chapterTitle{
+      font-family: "Instrument Serif", serif;
+      font-weight: 400;
+      font-size: 70px;
+      line-height: .92;
+      margin: 0 0 10px;
+    }
+    .chapterLead{
+      margin:0 0 22px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 70ch;
+    }
+
+    /* Content panel feels like paper, not a UI card */
+    .paperPanel{
+      border: 1px solid var(--edge);
+      background: rgba(230,221,210,.55);
+      box-shadow: var(--shadowSoft);
+      padding: 18px 18px 16px;
+    }
+    .projTitle{
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing:.14em;
+      text-transform: uppercase;
+    }
+    .projMeta{
+      font-size: 12px;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      color: rgba(31,27,23,.58);
+    }
+    .projDesc{
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .imgRow{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .ph{
+      height: 96px;
+      border: 1px dashed rgba(31,27,23,.25);
+      background: rgba(255,255,255,.14);
+    }
+
+    /* Right-side mini folders: stacked tabs like your second reference */
+    .miniStack{ padding-top: 64px; position:relative; }
+    .miniFolder{
+      position:relative;
+      width:100%;
+      height: 92px;
+      border: 1px solid var(--edge);
+      background: var(--paper2);
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+      cursor:pointer;
+      padding:0;
+      text-align:left;
+      overflow:hidden;
+
+      clip-path: polygon(
+        0% 28%,
+        28% 28%,
+        36% 10%,
+        64% 10%,
+        64% 28%,
+        100% 28%,
+        100% 100%,
+        0% 100%
+      );
+
+      transition: transform .28s var(--ease), box-shadow .28s var(--ease), filter .28s var(--ease);
+    }
+    .miniFolder + .miniFolder{ margin-top: -48px; }
+
+    .miniFolder:hover{ transform: translateX(18px); box-shadow: var(--shadowHard); }
+    .miniFolder.active{ transform: translateX(18px); box-shadow: var(--shadowHard); filter: contrast(1.03); }
+
+    .miniFolder .tabLabel{
+      position:absolute;
+      top: 16px;
+      left: 20px;
+      font-weight: 800;
+      letter-spacing:.14em;
+      font-size: 11px;
+      text-transform: uppercase;
+      max-width: calc(100% - 40px);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    @media (max-width: 980px){
+      .cabinetGrid{ grid-template-columns: 1fr; gap: 26px; }
+      .note{ padding-top: 12px; }
+      .noteTitle{ font-size: 54px; }
+      .chapterShell{ grid-template-columns: 1fr; }
+      .miniStack{ padding-top: 12px; }
+      .miniFolder + .miniFolder{ margin-top: 10px; }
+      .corner{ right: 18px; bottom: 14px; }
+    }
+  </style>
 </head>
+
 <body>
-  <main class="app" id="app">
-    <header class="top">
-      <div class="kicker">Portfolio archive — select a folder to open the file.</div>
-    </header>
+  <div class="top">Portfolio archive — select a folder to open the file.</div>
 
-    <!-- CABINET VIEW -->
-    <section class="cabinet" id="cabinetView" aria-label="File cabinet view">
-      <div class="cabinetGrid">
-        <div class="stack" id="folderStack" aria-label="Folder stack"></div>
+  <!-- CABINET VIEW -->
+  <section class="view" id="cabinetView">
+    <div class="cabinetGrid">
+      <div class="stack" id="stack"></div>
 
-        <aside class="note" aria-label="Hover description">
-          <h1 class="noteTitle" id="noteTitle">Hover a folder</h1>
-          <p class="noteDesc" id="noteDesc">Pull a file forward to preview the job. Click to open the file.</p>
-          <div class="noteMeta" id="noteMeta"></div>
-        </aside>
-      </div>
-      <div class="cornerArrow" aria-hidden="true">→</div>
-    </section>
+      <aside class="note">
+        <h1 class="noteTitle" id="noteTitle">Hover a folder</h1>
+        <p class="noteDesc" id="noteDesc">Pull a file forward to preview. Click to open the file.</p>
+        <div class="noteMeta" id="noteMeta"></div>
+      </aside>
+    </div>
+  </section>
 
-    <!-- CHAPTER VIEW -->
-    <section class="chapter hidden" id="chapterView" aria-label="Open folder view">
-      <div class="chapterShell">
-        <button class="back" id="backBtn" type="button">← Back to cabinet</button>
+  <!-- CHAPTER VIEW -->
+  <section class="view hidden" id="chapterView">
+    <div class="chapterShell">
+      <div>
+        <button class="backBtn" id="backBtn" type="button">← Back to cabinet</button>
+        <h2 class="chapterTitle" id="chapterTitle"></h2>
+        <p class="chapterLead" id="chapterLead"></p>
 
-        <div class="chapterMain">
-          <h2 class="chapterTitle" id="chapterTitle"></h2>
-          <p class="chapterLead" id="chapterLead"></p>
-
-          <div class="projectCard" id="projectCard">
-            <h3 class="projectTitle" id="projectTitle"></h3>
-            <div class="projectMeta" id="projectMeta"></div>
-            <p class="projectDesc" id="projectDesc"></p>
-
-            <div class="imageRow" id="imageRow">
-              <div class="imgPh"></div>
-              <div class="imgPh"></div>
-              <div class="imgPh"></div>
-            </div>
+        <div class="paperPanel">
+          <div class="projTitle" id="projTitle"></div>
+          <div class="projMeta" id="projMeta"></div>
+          <p class="projDesc" id="projDesc"></p>
+          <div class="imgRow">
+            <div class="ph"></div><div class="ph"></div><div class="ph"></div>
           </div>
         </div>
-
-        <aside class="miniStackWrap" aria-label="Sub-project folders">
-          <div class="miniStack" id="miniStack"></div>
-        </aside>
-
-        <div class="cornerArrow" aria-hidden="true">→</div>
       </div>
-    </section>
-  </main>
 
-  <script src="script.js"></script>
+      <aside class="miniStack" id="miniStack"></aside>
+    </div>
+  </section>
+
+  <div class="corner">→</div>
+
+  <script>
+    // Data (edit titles/descriptions here)
+    const jobs = [
+      {
+        id:"motor",
+        title:"Motor Presse Hearst",
+        meta:"Editorial / Live experiences / Brand programming",
+        short:"A concise snapshot of your role and impact in editorial, live experiences, and brand programming.",
+        long:"After we’ve established and refined the work to the most aligned state, this chapter expands into individual projects.",
+        projects:[
+          { id:"ispo", title:"ISPO Runners Symposium", meta:"2024 · Creative direction · Figma, InDesign", desc:"Replace with project details." },
+          { id:"abarth", title:"Abarth Workout Night", meta:"2023 · Brand design · Illustrator, AE", desc:"Replace with project details." },
+          { id:"mhwh", title:"Men’s & Women’s Health Camp", meta:"2022 · Design system · Figma", desc:"Replace with project details." },
+        ]
+      },
+      {
+        id:"bingoo",
+        title:"Bingoo",
+        meta:"Brand / Social",
+        short:"Campaign system, templates and art direction across formats.",
+        long:"Open the file to browse sub-project folders on the right.",
+        projects:[
+          { id:"sys", title:"Template System", meta:"2024 · Design · Figma", desc:"Replace with project details." },
+          { id:"launch", title:"Launch Assets", meta:"2024 · Art direction · Photoshop", desc:"Replace with project details." },
+        ]
+      },
+      {
+        id:"lenus",
+        title:"Lenus",
+        meta:"Social / Performance creative",
+        short:"Social assets and iterations built for clarity and conversion.",
+        long:"Open the file to browse sub-project folders on the right.",
+        projects:[
+          { id:"ads", title:"Ad Variations", meta:"2023 · Design · Figma", desc:"Replace with project details." },
+          { id:"motion", title:"Motion Cutdowns", meta:"2023 · Motion · After Effects", desc:"Replace with project details." },
+        ]
+      },
+      {
+        id:"elysium",
+        title:"Elysium Ventures Group",
+        meta:"Strategy / Identity",
+        short:"Identity exploration and rollout assets across touchpoints.",
+        long:"Open the file to browse sub-project folders on the right.",
+        projects:[
+          { id:"id", title:"Identity System", meta:"2022 · Brand · Illustrator", desc:"Replace with project details." },
+        ]
+      },
+      {
+        id:"general",
+        title:"General",
+        meta:"Cross-disciplinary",
+        short:"A mix of independent work spanning design, branding and editorial.",
+        long:"Open the file to browse sub-project folders on the right.",
+        projects:[
+          { id:"posters", title:"Posters", meta:"2021–2024 · Design · InDesign", desc:"Replace with project details." },
+          { id:"editorial", title:"Editorial", meta:"2020–2024 · Layout · InDesign", desc:"Replace with project details." },
+        ]
+      },
+    ];
+
+    const tabs = ["var(--tab1)","var(--tab2)","var(--tab3)","var(--tab4)","var(--tab5)"];
+
+    const stack = document.getElementById("stack");
+    const noteTitle = document.getElementById("noteTitle");
+    const noteDesc  = document.getElementById("noteDesc");
+    const noteMeta  = document.getElementById("noteMeta");
+
+    const cabinetView = document.getElementById("cabinetView");
+    const chapterView = document.getElementById("chapterView");
+
+    const chapterTitle = document.getElementById("chapterTitle");
+    const chapterLead  = document.getElementById("chapterLead");
+    const miniStack    = document.getElementById("miniStack");
+
+    const projTitle = document.getElementById("projTitle");
+    const projMeta  = document.getElementById("projMeta");
+    const projDesc  = document.getElementById("projDesc");
+
+    const backBtn = document.getElementById("backBtn");
+
+    let activeJob = null;
+    let activeProject = null;
+
+    function renderCabinet(){
+      stack.innerHTML = "";
+      jobs.forEach((job, i) => {
+        const b = document.createElement("button");
+        b.className = "folder";
+        b.type = "button";
+        b.style.setProperty("--tab", tabs[i % tabs.length]);
+        b.style.zIndex = String(100 - i);
+
+        b.innerHTML = `
+          <div class="tabColor"></div>
+          <div class="tabLabel">${job.title}</div>
+          <div class="mini">${job.meta}</div>
+        `;
+
+        b.addEventListener("mouseenter", () => preview(job));
+        b.addEventListener("focus", () => preview(job));
+        b.addEventListener("click", () => openJob(job));
+
+        stack.appendChild(b);
+      });
+
+      preview(jobs[0]);
+    }
+
+    function preview(job){
+      noteTitle.textContent = job.title;
+      noteDesc.textContent  = job.short;
+      noteMeta.textContent  = job.meta;
+    }
+
+    function openJob(job){
+      activeJob = job;
+      activeProject = job.projects[0] || null;
+
+      cabinetView.classList.add("hidden");
+      chapterView.classList.remove("hidden");
+
+      chapterTitle.textContent = job.title;
+      chapterLead.textContent  = job.long;
+
+      renderMini(job);
+      showProject(activeProject);
+    }
+
+    function renderMini(job){
+      miniStack.innerHTML = "";
+      job.projects.forEach((p, i) => {
+        const b = document.createElement("button");
+        b.className = "miniFolder";
+        b.type = "button";
+        b.style.zIndex = String(100 - i);
+        b.innerHTML = `<div class="tabLabel">${p.title}</div>`;
+
+        b.addEventListener("mouseenter", () => showProject(p, false));
+        b.addEventListener("focus", () => showProject(p, false));
+        b.addEventListener("click", () => showProject(p, true));
+
+        miniStack.appendChild(b);
+      });
+      syncActiveMini();
+    }
+
+    function syncActiveMini(){
+      [...miniStack.children].forEach((node) => {
+        const t = node.querySelector(".tabLabel")?.textContent;
+        node.classList.toggle("active", activeProject && t === activeProject.title);
+      });
+    }
+
+    function showProject(p, persist=true){
+      if(!p) return;
+      if(persist) activeProject = p;
+      projTitle.textContent = p.title;
+      projMeta.textContent  = p.meta;
+      projDesc.textContent  = p.desc;
+      syncActiveMini();
+    }
+
+    backBtn.addEventListener("click", () => {
+      chapterView.classList.add("hidden");
+      cabinetView.classList.remove("hidden");
+      activeJob = null;
+      activeProject = null;
+    });
+
+    renderCabinet();
+  </script>
 </body>
 </html>
