@@ -67,14 +67,15 @@ main { padding: 30px 40px 60px; }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 28px;
+  grid-template-columns: 1fr;
+  gap: 18px;
   padding: 30px;
   background: var(--paper);
   border: 1px solid var(--edge);
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
+  text-align: center;
 }
 
 .hero-shape {
@@ -94,11 +95,11 @@ main { padding: 30px 40px 60px; }
   color: var(--rust);
 }
 
-.hero h1 {
+.hero-name {
   font-family: "Rubik Mono One", monospace;
   font-size: 40px;
-  line-height: 1.15;
-  margin: 12px 0 12px;
+  line-height: 1.1;
+  margin: 8px 0 8px;
   color: var(--terracotta);
 }
 
@@ -125,42 +126,32 @@ main { padding: 30px 40px 60px; }
   color: var(--rust);
 }
 
-.hero-right { display: grid; gap: 16px; }
-
-.portrait {
-  background: #f6eee6;
-  border: 1px solid var(--edge);
-  padding: 10px;
+.hero-center {
+  display: grid;
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
 }
 
-.portrait img {
+.hero-motto-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-portrait {
+  border: 1px solid var(--edge);
+  padding: 10px;
+  background: #f6eee6;
+  max-width: 420px;
+}
+
+.hero-portrait img {
   width: 100%;
   height: auto;
   display: block;
-}
-
-.stat-block {
-  background: #f6eee6;
-  border: 1px solid var(--edge);
-  padding: 14px;
-}
-
-.stat { font-size: 14px; margin-bottom: 6px; }
-
-.hero-card {
-  background: #f6eee6;
-  border: 1px solid var(--edge);
-  padding: 16px;
-}
-
-.card-title { text-transform: uppercase; font-size: 12px; letter-spacing: 1.5px; color: var(--rust); }
-
-.pill-row span {
-  display: inline-block;
-  background: var(--sand);
-  padding: 6px 10px;
-  margin: 6px 6px 0 0;
-  font-size: 12px;
 }
 
 .section { margin-top: 70px; }
@@ -174,48 +165,6 @@ main { padding: 30px 40px 60px; }
   color: var(--terracotta);
 }
 
-.about-hero {
-  background: var(--paper);
-  border: 1px solid var(--edge);
-  padding: 28px;
-  position: relative;
-  overflow: hidden;
-}
-
-.about-header {
-  font-family: "Rubik Mono One", monospace;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--terracotta);
-  margin-bottom: 20px;
-}
-
-.about-layout {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 20px;
-  align-items: center;
-}
-
-.about-center {
-  text-align: center;
-}
-
-.about-name-large {
-  font-family: "Rubik Mono One", monospace;
-  font-size: 36px;
-  color: var(--terracotta);
-  margin-bottom: 12px;
-}
-
-.about-motto-row {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr 1fr;
-  gap: 16px;
-  align-items: center;
-}
-
 .motto-side {
   font-family: "Rubik Mono One", monospace;
   font-size: 16px;
@@ -224,32 +173,19 @@ main { padding: 30px 40px 60px; }
   text-align: center;
 }
 
-.about-portrait {
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.about-panel {
+  background: var(--paper);
   border: 1px solid var(--edge);
-  padding: 10px;
-  background: #f6eee6;
+  padding: 18px;
 }
 
-.about-portrait img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.about-note {
-  border: 1px solid var(--edge);
-  padding: 14px;
-  background: #f6eee6;
-}
-
-.note-title {
-  font-family: "Rubik Mono One", monospace;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--rust);
-  margin-bottom: 6px;
-}
+.about-panel h2 { font-family: "Rubik Mono One", monospace; font-size: 16px; color: var(--terracotta); }
 
 .portfolio-grid {
   display: grid;
@@ -307,8 +243,7 @@ main { padding: 30px 40px 60px; }
 @media (max-width: 900px) {
   .site-header { flex-direction: column; align-items: flex-start; gap: 10px; }
   .hero { grid-template-columns: 1fr; }
-  .about-layout { grid-template-columns: 1fr; }
-  .about-motto-row { grid-template-columns: 1fr; }
+  .hero-motto-row { grid-template-columns: 1fr; }
   .portfolio-grid, .testimonials, .contact-grid { grid-template-columns: 1fr; }
   main { padding: 20px; }
 }
