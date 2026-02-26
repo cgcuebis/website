@@ -3,7 +3,7 @@
   --paper: #efe3d7;
   --ink: #1b130d;
   --muted: rgba(27,19,13,.65);
-  --terracotta: #d8510e;
+  --terracotta: #200208;
   --rust: #732b0c;
   --sand: #e0cdbf;
   --edge: rgba(27, 19, 13, 0.12);
@@ -49,7 +49,7 @@ body {
   font-size: 18px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #a22452;
+  color: #200208;
 }
 
 .nav a {
