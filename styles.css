@@ -142,9 +142,9 @@ main { padding: 30px 40px 60px; }
 }
 
 .hero-portrait {
-  border: 1px solid var(--edge);
-  padding: 10px;
-  background: #f6eee6;
+  border: none;
+  padding: 0;
+  background: transparent;
   max-width: 420px;
 }
 
