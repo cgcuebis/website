@@ -1,13 +1,13 @@
 :root {
-  --bg: #f3cc8f;
-  --paper: #f3cc8f;
+  --bg: #f4ece3;
+  --paper: #efe3d7;
   --ink: #1b130d;
   --muted: rgba(27,19,13,.65);
   --terracotta: #d8510e;
   --rust: #732b0c;
-  --sand: #f3cc8f;
-  --edge: rgba(27, 19, 13, 0.18);
-  --shadow: 0 18px 40px rgba(27, 19, 13, 0.16);
+  --sand: #e0cdbf;
+  --edge: rgba(27, 19, 13, 0.12);
+  --shadow: 0 18px 40px rgba(27, 19, 13, 0.12);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -15,7 +15,7 @@
 html, body { height: 100%; }
 body {
   margin: 0;
-  background: radial-gradient(1200px 800px at 10% -10%, #f3cc8f 0%, var(--bg) 55%, #f7d9a7 100%);
+  background: radial-gradient(1200px 800px at 10% -10%, #f0dccb 0%, var(--bg) 55%, #f7efe7 100%);
   color: var(--ink);
   font-family: "Montserrat", system-ui, sans-serif;
 }
@@ -24,7 +24,7 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.10;
+  opacity: 0.12;
   mix-blend-mode: multiply;
   background:
     repeating-linear-gradient(0deg, rgba(0,0,0,.02), rgba(0,0,0,.02) 1px, transparent 1px, transparent 4px),
@@ -39,7 +39,7 @@ body {
   padding: 28px 40px 10px;
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, rgba(243,204,143,0.95), rgba(243,204,143,0.6));
+  background: linear-gradient(180deg, rgba(244,236,227,0.95), rgba(244,236,227,0.6));
   backdrop-filter: blur(6px);
   z-index: 10;
 }
@@ -128,7 +128,7 @@ main { padding: 30px 40px 60px; }
 .hero-right { display: grid; gap: 16px; }
 
 .stat-block {
-  background: rgba(255,255,255,0.25);
+  background: #f6eee6;
   border: 1px solid var(--edge);
   padding: 14px;
 }
@@ -136,7 +136,7 @@ main { padding: 30px 40px 60px; }
 .stat { font-size: 14px; margin-bottom: 6px; }
 
 .hero-card {
-  background: rgba(255,255,255,0.25);
+  background: #f6eee6;
   border: 1px solid var(--edge);
   padding: 16px;
 }
@@ -145,7 +145,7 @@ main { padding: 30px 40px 60px; }
 
 .pill-row span {
   display: inline-block;
-  background: rgba(255,255,255,0.35);
+  background: var(--sand);
   padding: 6px 10px;
   margin: 6px 6px 0 0;
   font-size: 12px;
